@@ -21,7 +21,7 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
 
     const mainPath = api.root.addResource('quotes');
 
-    mainPath.addMethod('GET', new apigateway.LambdaIntegration(getQuotes));
+    const getQuotesMethod = mainPath.addMethod('GET', new apigateway.LambdaIntegration(getQuotes));
 
     // Enable CORS for the /quotes resource
     mainPath.addMethod('OPTIONS', new apigateway.MockIntegration({
@@ -52,12 +52,12 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
     const plan = api.addUsagePlan('UsagePlan', {
       name: 'QuoteApiUsagePlan',
       throttle: {
-      rateLimit: 100 / 3600, // ~0.0277 req/sec = 100 req/hour
-      burstLimit: 5,
+        rateLimit: 1, // 1 req/sec = 3600 req/hour, but quota will limit to 100/hour
+        burstLimit: 5,
       },
       quota: {
-      limit: 100,
-      period: apigateway.Period.HOUR,
+        limit: 100,
+        period: apigateway.Period.DAY,
       },
     });
 
@@ -66,13 +66,14 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
     plan.addApiStage({
       stage: api.deploymentStage,
       throttle: [
-      {
-        method: mainPath.methods.find(m => m.httpMethod === 'GET'),
-        throttle: {
-        rateLimit: 100 / 3600,
-        burstLimit: 5,
+        {
+          // Reference the GET method directly
+          method: getQuotesMethod,
+          throttle: {
+            rateLimit: 1,
+            burstLimit: 5,
+          },
         },
-      },
       ],
     });
 
