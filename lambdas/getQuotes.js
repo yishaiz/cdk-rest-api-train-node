@@ -1,4 +1,4 @@
-exports.handlers = async (event, context) => {
+exports.handler = async (event, context) => {
   const quotes = [
     {
       id: 1,
