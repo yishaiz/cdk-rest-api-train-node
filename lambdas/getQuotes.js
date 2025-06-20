@@ -25,21 +25,24 @@ exports.handlers = async (event, context) => {
       text: 'You are never too old to set another goal or to dream a new dream.',
       by: 'C.S. Lewis',
     },
-  ]; 
+  ];
+
+  const item = quotes[Math.floor(Math.random() * quotes.length)];
 
   return {
     statusCode: 200,
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      message: 'Hello from getQuotes handler!',
-      event: event,
-      context: context,
-    }),
+    body: JSON.stringify(item),
   };
 };
 
+//     body: JSON.stringify({
+//   message: 'Hello from getQuotes handler!',
+//   event: event,
+//   context: context,
+// }),
 // const { getQuotes } = require('../services/quotesService');
 //   try {
 //     const quotes = await getQuotes();
