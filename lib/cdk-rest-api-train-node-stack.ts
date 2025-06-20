@@ -21,64 +21,43 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
 
     const mainPath = api.root.addResource('quotes');
 
-    const getQuotesMethod = mainPath.addMethod('GET', new apigateway.LambdaIntegration(getQuotes));
+    const method = mainPath.addMethod(
+      'GET',
+      new apigateway.LambdaIntegration(getQuotes)
+    );
 
-    // Enable CORS for the /quotes resource
-    mainPath.addMethod('OPTIONS', new apigateway.MockIntegration({
-      integrationResponses: [{
-      statusCode: '200',
-      responseParameters: {
-        'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-        'method.response.header.Access-Control-Allow-Origin': "'*'",
-        'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET'"
-      },
-      }],
-      passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
-      requestTemplates: {
-      "application/json": "{\"statusCode\": 200}"
-      }
-    }), {
-      methodResponses: [{
-      statusCode: '200',
-      responseParameters: {
-        'method.response.header.Access-Control-Allow-Headers': true,
-        'method.response.header.Access-Control-Allow-Methods': true,
-        'method.response.header.Access-Control-Allow-Origin': true,
-      }
-      }]
-    });
+    // 1. צור API Key
+    const apiKey = api.addApiKey('ApiKey');
 
-    // Add usage plan and API key for rate limiting
+    // 2. צור Usage Plan עם הגבלת קצב (rate) ו‑burst
     const plan = api.addUsagePlan('UsagePlan', {
       name: 'QuoteApiUsagePlan',
       throttle: {
-        rateLimit: 1, // 1 req/sec = 3600 req/hour, but quota will limit to 100/hour
-        burstLimit: 5,
+        rateLimit: 5, // קריאות בשנייה
+        burstLimit: 10, // קריאות מקבילות
       },
       quota: {
-        limit: 100,
+        limit: 1000, // תקופה יומית
         period: apigateway.Period.DAY,
       },
     });
 
-    const apiKey = api.addApiKey('ApiKey');
+    // 3. חבר API Key ל‑Usage Plan
     plan.addApiKey(apiKey);
+
+    // 4. חבר את השלב (stage) שלך ל‑Usage Plan
     plan.addApiStage({
       stage: api.deploymentStage,
       throttle: [
         {
-          // Reference the GET method directly
-          method: getQuotesMethod,
+          method: method,
           throttle: {
-            rateLimit: 1,
+            rateLimit: 2, // לקביעת הגבלה ספציפית על GET /quotes
             burstLimit: 5,
           },
         },
       ],
     });
-
-    //    mainPath.addMethod('GET', new apigateway.LambdaIntegration(getQuotes), {
-    //   methodResponses: [{ statusCode: '200' }],
-    // });
   }
 }
+
