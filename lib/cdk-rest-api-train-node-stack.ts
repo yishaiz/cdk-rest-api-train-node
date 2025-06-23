@@ -38,7 +38,7 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
 
     const method = mainPath.addMethod(
       'GET',
-      new apigateway.LambdaIntegration(getQuotes)
+      new apigateway.LambdaIntegration(handlerFunction)
     );
 
     // 1. צור API Key
