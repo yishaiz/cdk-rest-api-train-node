@@ -41,6 +41,8 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
       new apigateway.LambdaIntegration(handlerFunction)
     );
 
+
+    /*
     // 1. צור API Key
     const apiKey = api.addApiKey('ApiKey');
 
@@ -75,3 +77,4 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
     });
   }
 }
+*/
