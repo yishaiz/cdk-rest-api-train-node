@@ -1,8 +1,6 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand } = require('@aws-sdk/lib-dynamodb');
 
-// לא לשכוח: ב־Lambda Node.js 18 ה‑v3 כבר כלול :contentReference[oaicite:2]{index=2}
-// DynamoDBClient הוא הלקוח הנמוך, DocumentClient מאפשר עבודה עם JSON פשוט.
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -12,6 +10,12 @@ const TABLE_NAME = process.env.TABLE_NAME;
 exports.handler = async (event) => {
   console.log('Event::::', JSON.stringify(event, null, 2));
 
+  return {
+      statusCode: 200,
+      body: JSON.stringify(TABLE_NAME),
+    };
+
+/*
   try {
     const { id } = event.pathParameters || {};
     if (!id) {
@@ -30,6 +34,7 @@ exports.handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(result.Item ?? {}),
     };
+
   } catch (err) {
     console.error(err);
     return {
@@ -37,6 +42,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: err.message }),
     };
   }
+    */
 };
 
 // return {
@@ -46,4 +52,4 @@ exports.handler = async (event) => {
 //   }),
 // };
 
-x = 
+
