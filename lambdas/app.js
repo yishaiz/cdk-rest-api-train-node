@@ -10,10 +10,42 @@ exports.handler = async (event) => {
   console.log('Event::::', JSON.stringify(event, null, 2));
   console.log('Event::::', event);
 
-  return sendResponse(
-    200,
-    JSON.stringify({ message: 'Hello from the Lambda function!', TABLE_NAME })
-  );
+  const path = event.resource;
+  const httpMethod = event.httpMethod;
+  const route = httpMethod.concate(' ').concate(path);
+
+  const data = JSON.parse(event.body || '{}');
+
+  console.log({ path, httpMethod, route, data });
+
+  let body;
+  let statusCode = 200;
+
+  try {
+    switch (route) {
+      case 'GET /quotes': {
+        body = await listQuotes();
+        break;
+      }
+      case 'POST /quotes': {
+        body = await saveQuoteQuote(data);
+        break;
+      }
+      default: {
+        throw new Error(`Unsupported route: ${route}`);
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error);
+
+    statusCode = error.message.includes('Unsupported route') ? 404 : 500;
+    body = error.message || 'Internal Server Error';
+  } finally {
+    console.log('Response:', { statusCode, body });
+    body = JSON.stringify(body || {});
+
+    return sendResponse(statusCode, body);
+  }
 };
 
 async function saveQuote(data) {
@@ -44,6 +76,15 @@ async function saveQuote(data) {
   });
 }
 
+async function listQuotes() {
+  return '';
+}
+
+// let body = await listQuotes();
+
+// const body = await docClient.scan({ TableName: TABLE_NAME }).promise();
+// console.log('Quotes:', body);
+// return sendResponse(200, JSON.stringify(body.Items || []));
 const sendResponse = (status, body) => {
   return {
     statusCode: status,
