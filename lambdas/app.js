@@ -36,7 +36,7 @@ exports.handler = async (event) => {
         break;
       }
       case 'POST /quotes': {
-        body = await saveQuoteQuote(data);
+        body = await saveQuote(data);
         break;
       }
       default: {
