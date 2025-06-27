@@ -74,7 +74,7 @@ async function saveQuote(data) {
     await docClient.send(new PutCommand(params));
     return item;
   } catch (error) {
-    console.error('DynamoDB put error', err);
+    console.error('DynamoDB put error', error);
     throw err;
   }
 }
