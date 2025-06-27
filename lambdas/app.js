@@ -11,9 +11,10 @@ exports.handler = async (event) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ TABLE_NAME: TABLE_NAME }),
+    body: JSON.stringify({TABLE_NAME}),
   };
 };
+
 
 /*
   try {
