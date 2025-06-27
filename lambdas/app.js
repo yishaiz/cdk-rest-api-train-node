@@ -12,7 +12,7 @@ exports.handler = async (event) => {
 
   const path = event.resource;
   const httpMethod = event.httpMethod;
-  const route = httpMethod.concate(' ').concate(path);
+  const route = httpMethod.concat(' ').concat(path);
 
   const data = JSON.parse(event.body || '{}');
 
