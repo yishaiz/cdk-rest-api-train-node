@@ -34,12 +34,17 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
       description: 'API for fetching quotes',
     });
 
+    // Integration
+    const handlerIntegration = new apigateway.LambdaIntegration(
+      handlerFunction
+    );
+
     const mainPath = api.root.addResource('quotes');
 
-    const method = mainPath.addMethod(
-      'GET',
-      new apigateway.LambdaIntegration(handlerFunction)
-    );
+    // GET
+    mainPath.addMethod('GET', handlerIntegration);
+
+    //POST
+    mainPath.addMethod('POST', handlerIntegration);
   }
 }
- 

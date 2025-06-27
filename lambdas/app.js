@@ -43,9 +43,8 @@ exports.handler = async (event) => {
   } finally {
     console.log('Response:', { statusCode, body });
     body = JSON.stringify(body || {});
-
-    return sendResponse(statusCode, body);
   }
+  return sendResponse(statusCode, body);
 };
 
 async function saveQuote(data) {
@@ -63,22 +62,22 @@ async function saveQuote(data) {
     Item: newQuote,
   };
 
-  // return dynamo
-  //   .put(params)
-  //   .promise()
-  //   .then(() => {
-  //     return item;
-  return newQuote;
-  //   });
-
   return docClient.put(params).then(() => {
     return item;
   });
 }
 
 async function listQuotes() {
-  return '';
+  return 'list of quotes ...';
 }
+
+// return dynamo
+//   .put(params)
+//   .promise()
+//   .then(() => {
+//     return item;
+// return newQuote;
+//   });
 
 // let body = await listQuotes();
 
