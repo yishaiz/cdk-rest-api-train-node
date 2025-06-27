@@ -1,7 +1,6 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand } = require('@aws-sdk/lib-dynamodb');
 
-
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
@@ -11,9 +10,11 @@ exports.handler = async (event) => {
   console.log('Event::::', JSON.stringify(event, null, 2));
 
   return {
-      statusCode: 200,
-      body: JSON.stringify(TABLE_NAME),
-    };
+    statusCode: 200,
+    body: JSON.stringify(TABLE_NAME),
+  };
+};
+
 
 /*
   try {
@@ -43,7 +44,6 @@ exports.handler = async (event) => {
     };
   }
     */
-};
 
 // return {
 //   statusCode: 200,
@@ -51,5 +51,3 @@ exports.handler = async (event) => {
 //     quote: 'Hello my quote!',
 //   }),
 // };
-
-
