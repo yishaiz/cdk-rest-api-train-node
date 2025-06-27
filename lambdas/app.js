@@ -1,8 +1,16 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, GetCommand } = require('@aws-sdk/lib-dynamodb');
+const {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+} = require('@aws-sdk/lib-dynamodb');
 
 const client = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(client);
+const docClient = DynamoDBDocumentClient.from(client, {
+  marshallOptions: {
+    removeUndefinedValues: true,
+  },
+});
 
 const TABLE_NAME = process.env.TABLE_NAME;
 
@@ -28,7 +36,7 @@ exports.handler = async (event) => {
         break;
       }
       case 'POST /quotes': {
-        body = await saveQuote(data);
+        body = await saveQuoteQuote(data);
         break;
       }
       default: {
@@ -62,15 +70,32 @@ async function saveQuote(data) {
     Item: newQuote,
   };
 
-  return docClient.put(params).then(() => {
+  try {
+    await docClient.send(new PutCommand(params));
     return item;
-  });
+  } catch (error) {
+    console.error('DynamoDB put error', err);
+    throw err;
+  }
 }
 
 async function listQuotes() {
   return 'list of quotes ...';
 }
 
+const sendResponse = (status, body) => {
+  return {
+    statusCode: status,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body,
+  };
+};
+
+// return docClient.put(params).then(() => {
+//   return item;
+// });
 // return dynamo
 //   .put(params)
 //   .promise()
@@ -84,15 +109,6 @@ async function listQuotes() {
 // const body = await docClient.scan({ TableName: TABLE_NAME }).promise();
 // console.log('Quotes:', body);
 // return sendResponse(200, JSON.stringify(body.Items || []));
-const sendResponse = (status, body) => {
-  return {
-    statusCode: status,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body,
-  };
-};
 
 /*
   try {
