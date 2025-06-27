@@ -9,12 +9,21 @@ const TABLE_NAME = process.env.TABLE_NAME;
 exports.handler = async (event) => {
   console.log('Event::::', JSON.stringify(event, null, 2));
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({TABLE_NAME}),
-  };
+  return sendResponse(
+    200,
+    JSON.stringify({ message: 'Hello from the Lambda function!', TABLE_NAME })
+  );
 };
 
+const sendResponse = (status, body) => {
+  return {
+    statusCode: status,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body,
+  };
+};
 
 /*
   try {
