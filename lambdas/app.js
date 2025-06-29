@@ -80,7 +80,20 @@ async function saveQuote(data) {
 }
 
 async function listQuotes() {
-  return 'list of quotes ...';
+  const params = {
+    TableName: TABLE_NAME,
+  };
+
+  // return dynamo
+  //   .scan(params)
+  //   .promise()
+  //   .then((data) => {
+  //     return data.Items;
+  //   });
+
+  const data = await docClient.send(new GetCommand(params));
+
+  return data.Items || [];
 }
 
 const sendResponse = (status, body) => {
