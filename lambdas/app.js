@@ -6,7 +6,6 @@ const {
   ScanCommand,
   PutCommand,
 } = require('@aws-sdk/lib-dynamodb');
-const { Key } = require('aws-cdk-lib/aws-kms');
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client, {
