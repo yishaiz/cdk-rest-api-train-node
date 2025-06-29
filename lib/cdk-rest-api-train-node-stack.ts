@@ -40,11 +40,19 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
     );
 
     const mainPath = api.root.addResource('quotes');
+    const idPath = mainPath.addResource('{id}');
 
     // GET
     mainPath.addMethod('GET', handlerIntegration);
 
-    //POST
+    // POST
     mainPath.addMethod('POST', handlerIntegration);
+
+    // DELETE
+    idPath.addMethod('DELETE', handlerIntegration);
+
+    
+    idPath.addMethod('GET', handlerIntegration);
+    idPath.addMethod('PUT', handlerIntegration);
   }
 }
