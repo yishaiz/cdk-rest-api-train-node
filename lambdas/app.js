@@ -95,7 +95,7 @@ async function saveQuote(data) {
 
 async function updateQuote(data) {
   const { id, quote, by } = data;
-  const time = new Date().getTime().toISOString();
+  const time = new Date().toISOString();
 
   const params = {
     TableName: TABLE_NAME,
