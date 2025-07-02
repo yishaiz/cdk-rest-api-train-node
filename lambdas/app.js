@@ -94,7 +94,7 @@ async function saveQuote(data) {
 }
 
 async function updateQuote(data) {
-  const { id, quote, by:author } = data;
+  const { id, quote, by: author } = data;
   const time = new Date().toISOString();
 
   const params = {
@@ -109,7 +109,8 @@ async function updateQuote(data) {
       ':updatedAt': time,
     },
 
-    UpdateExpression: 'SET quote = :quote, by = :author, updatedAt = :updatedAt',
+    UpdateExpression:
+      'SET quote = :quote, author = :author, updatedAt = :updatedAt',
     ReturnValue: ReturnValue.UPDATED_NEW,
   };
 
