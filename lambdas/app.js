@@ -1,7 +1,7 @@
-const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBClient, ReturnValue } = require('@aws-sdk/client-dynamodb');
 const {
   DynamoDBDocumentClient,
-  GetCommand,
+  UpdateCommand,
   DeleteCommand,
   ScanCommand,
   PutCommand,
@@ -43,6 +43,10 @@ exports.handler = async (event) => {
       }
       case 'POST /quotes': {
         body = await saveQuote(data);
+        break;
+      }
+      case 'PUT /quotes': {
+        body = await updateQuote(data);
         break;
       }
       case 'DELETE /quotes/{id}': {
@@ -89,6 +93,38 @@ async function saveQuote(data) {
   }
 }
 
+async function updateQuote(data) {
+  const { id, quote, by } = data;
+  const time = new Date().getTime().toISOString();
+
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      id,
+    },
+
+    ExpressionAttributeValues: {
+      ':quote': quote,
+      ':by': by,
+      ':updatedAt': time,
+    },
+
+    UpdateExpression: 'SET quote = :quote, by = :by, updatedAt = :updatedAt',
+    ReturnValue: ReturnValue.UPDATED_NEW,
+  };
+
+  // ExpressionAttributeNames = {
+
+  try {
+    const result = await docClient.send(new UpdateCommand(params));
+    console.log('*** Update result:', result);
+    return 'Item updated successfully';
+  } catch (err) {
+    console.error('DynamoDB put error', err);
+    throw err;
+  }
+}
+
 async function deleteQuote(id) {
   const params = {
     TableName: TABLE_NAME,
@@ -126,3 +162,22 @@ const sendResponse = (status, body) => {
     body,
   };
 };
+
+/*
+const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      id,
+    },
+
+    ExpressionAttributeValues: {
+      '#quote': quote,
+      '#by': by,
+      '#updatedAt': time,
+    },
+
+    UpdateExpression: 'SET #quote = :quote, #by = :by, updatedAt = :updatedAt',
+    ReturnValue: ReturnValue.UPDATED_NEW,
+  };
+
+*/
