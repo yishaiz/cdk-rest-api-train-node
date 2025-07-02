@@ -3,6 +3,7 @@ const {
   DynamoDBDocumentClient,
   UpdateCommand,
   DeleteCommand,
+  GetCommand,
   ScanCommand,
   PutCommand,
 } = require('@aws-sdk/lib-dynamodb');
@@ -38,7 +39,7 @@ exports.handler = async (event) => {
         break;
       }
       case 'GET /quotes/{id}': {
-        body = await listQuotes();
+        body = await getQuote(event.pathParameters.id);
         break;
       }
       case 'POST /quotes': {
@@ -68,6 +69,21 @@ exports.handler = async (event) => {
   }
   return sendResponse(statusCode, body);
 };
+
+
+async function getQuote(id){
+    const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      id,
+    },
+  };
+
+  const result = await docClient.send(new GetCommand(params));
+  console.log('Get result:', result);
+  
+  return result.Item;
+}
 
 async function saveQuote(data) {
   const time = new Date().getTime();
