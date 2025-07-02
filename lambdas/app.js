@@ -37,7 +37,7 @@ exports.handler = async (event) => {
         body = await listQuotes();
         break;
       }
-      case 'GET /quotes{id}': {
+      case 'GET /quotes/{id}': {
         body = await listQuotes();
         break;
       }
@@ -45,7 +45,7 @@ exports.handler = async (event) => {
         body = await saveQuote(data);
         break;
       }
-      case 'PUT /quotes{id}': {
+      case 'PUT /quotes/{id}': {
         body = await updateQuote(event.pathParameters.id, data);
         break;
       }
