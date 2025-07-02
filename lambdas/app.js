@@ -94,7 +94,7 @@ async function saveQuote(data) {
 }
 
 async function updateQuote(id, data) {
-  const { quote, by } = data;
+  const { quote, by: author } = data;
   const time = new Date().toISOString();
 
   const params = {
@@ -102,22 +102,26 @@ async function updateQuote(id, data) {
     Key: {
       id,
     },
+
     ExpressionAttributeValues: {
       ':quote': quote,
-      ':by': by,
+      ':author': author,
       ':updatedAt': time,
     },
+
     UpdateExpression:
-      'SET quote = :quote, by = :by, updatedAt = :updatedAt',
-    ReturnValues: 'UPDATED_NEW',
+      'SET quote = :quote, author = :author, updatedAt = :updatedAt',
+    ReturnValue: ReturnValue.UPDATED_NEW,
   };
+
+  // ExpressionAttributeNames = {
 
   try {
     const result = await docClient.send(new UpdateCommand(params));
     console.log('*** Update result:', result);
     return 'Item updated successfully';
   } catch (err) {
-    console.error('DynamoDB update error', err);
+    console.error('DynamoDB put error', err);
     throw err;
   }
 }
