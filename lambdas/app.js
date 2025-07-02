@@ -105,11 +105,11 @@ async function updateQuote(data) {
 
     ExpressionAttributeValues: {
       ':quote': quote,
-      ':by': by,
+      ':author': by,
       ':updatedAt': time,
     },
 
-    UpdateExpression: 'SET quote = :quote, by = :by, updatedAt = :updatedAt',
+    UpdateExpression: 'SET quote = :quote, by = :author, updatedAt = :updatedAt',
     ReturnValue: ReturnValue.UPDATED_NEW,
   };
 
