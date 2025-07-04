@@ -6,6 +6,7 @@ import { join } from 'path';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { TableViewer } from 'cdk-dynamo-table-viewer';
 
 export class CdkRestApiTrainNodeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -34,6 +35,12 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
       description: 'API for fetching quotes',
     });
 
+    new TableViewer(this, 'QuotesTableViewer', {
+      title: 'Quotes Table',
+      table, // The DynamoDB table to view
+      sortBy: '-createdAt',
+    });
+
     // Integration
     const handlerIntegration = new apigateway.LambdaIntegration(
       handlerFunction
@@ -51,7 +58,6 @@ export class CdkRestApiTrainNodeStack extends cdk.Stack {
     // DELETE
     idPath.addMethod('DELETE', handlerIntegration);
 
-    
     idPath.addMethod('GET', handlerIntegration);
     idPath.addMethod('PUT', handlerIntegration);
   }
